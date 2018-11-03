@@ -1,0 +1,49 @@
+# set language
+language: node_js
+
+node_js: stable # set node version
+
+branches:
+  only:
+    - blog-sources # only listen this branch
+
+cache:
+  apt: true
+  directories:
+    - node_modules # Cache directories
+
+before_install:
+  - export TZ='Asia/Shanghai' # set time zone
+
+install:
+  - npm install # install hexo and plugins
+
+script:
+  - hexo clean
+  - hexo generate && gulp
+
+after_script:
+  - git clone https://${GH_REF} .deploy_git
+  - cd .deploy_git
+  - git checkout master
+  - cd ../
+  - mv .deploy_git/.git/ ./public/
+  - cd ./public
+  - git config user.name "Chao Hu"
+  - git config user.email "2824786905@qq.com"
+  - git add .
+  - git commit -m "Travis CI Auto Builder at `date +"%Y-%m-%d %H:%M"`"
+  - git push --force --quiet "https://${blog-token}@${GH_REF}" master:master
+
+env:
+  global:
+  - GH_REF: github.com/DoraDreams/blog.git
+
+# configure notifications (email, IRC, campfire etc)
+# please update this section to your needs!
+# https://docs.travis-ci.com/user/notifications/
+notifications:
+  email:
+    - 2824786905@qq.com
+  on_success: change
+  on_failure: always
