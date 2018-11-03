@@ -20,7 +20,7 @@ install:
 
 script:
   - hexo clean
-  - hexo generate && gulp
+  - hexo generate
 
 after_script:
   - git clone https://${GH_REF} .deploy_git
@@ -33,7 +33,7 @@ after_script:
   - git config user.email "2824786905@qq.com"
   - git add .
   - git commit -m "Travis CI Auto Builder at `date +"%Y-%m-%d %H:%M"`"
-  - git push --force --quiet "https://${blog-token}@${GH_REF}" master:master
+  - git push --force --quiet "https://${blog_token}@${GH_REF}" master:master
 
 env:
   global:
